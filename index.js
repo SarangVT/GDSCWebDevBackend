@@ -9,17 +9,17 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: "process.env.clientLink",
+    origin: process.env.clientLink || "http://localhost:3000",
     credentials: true,
 }));
-const MONGODB_LINK = process.env.MONGODB_LINK;
+const MONGODB_LINK = process.env.MONGODB_LINK || "mongodb://127.0.0.1:27017/BlogX"; 
 mongoose.connect(MONGODB_LINK).then(() => console.log("MongoDB Connected")).catch(err => console.log(err));
 
 const User = require("./models/User");
 const { createJWTCookie } = require('./Services/auth');
 const Blog = require('./models/Blog');
 
-const secretKey = process.env.secretKey;
+const secretKey = process.env.secretKey || "sarang";
 
 app.post("/user/signup", async (req, res) => {
     const { email, password , name , username} = req.body;
