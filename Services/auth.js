@@ -16,14 +16,14 @@ const verifyJWTCookie = (req,res,next) => {
 }
 
 const createJWTCookie = async (req, res, next) => {
+    console.log(1);
         const { email, password } = req.body;
     
         const user = await User.findOne({ email });
         if (!user) return res.status(400).json({ error: "User not found" });
-    
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
-    
+
         const token = jwt.sign({ id: user._id, email: user.email}, secretKey, { expiresIn: "7d" });
     
         res.cookie("jwt", token, {
@@ -33,7 +33,14 @@ const createJWTCookie = async (req, res, next) => {
             maxAge: 7*24*60*60*1000,
             path:"/",
         });
-    
+        // res.cookie("jwt", token, {
+        //     httpOnly: true,
+        //     secure: process.env.NODE_ENV === 'production',
+        //     sameSite: "lax",
+        //     maxAge: 7*24*60*60*1000,
+        //     path:"/",
+        // });
+
         res.json({userName:user.username});
         next();
 }
