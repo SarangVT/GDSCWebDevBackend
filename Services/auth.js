@@ -16,7 +16,6 @@ const verifyJWTCookie = (req,res,next) => {
 }
 
 const createJWTCookie = async (req, res, next) => {
-    console.log(1);
         const { email, password } = req.body;
     
         const user = await User.findOne({ email });
