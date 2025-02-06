@@ -28,9 +28,11 @@ const createJWTCookie = async (req, res, next) => {
     
         res.cookie("jwt", token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
-            maxAge: 7*60*60*24*1000,
+            secure: true,
+            sameSite: "None",
+            maxAge: 7*24*60*60*1000,
+            path:"/",
+            domain: "https://gdscwebdevbackend.onrender.com.onrender.com",
         });
     
         res.json({userName:user.username});
