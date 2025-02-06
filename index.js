@@ -69,7 +69,7 @@ app.post("/user/blog", async (req, res)=> {
 
 app.get('/blogs', async (req, res) => {
     try {
-      const blogs = await Blog.find({})
+      const blogs = await Blog.find({}).select('author title description createdAt bgColor')
       return res.json(blogs);
     } catch (error) {
       console.error('Error fetching blogs:', error);
@@ -92,11 +92,59 @@ app.get('/author/blogs', async (req, res)=> {
     try{
         const {author} = req.query;
         const blog = await Blog.find({author:author});
-        return res.json(blog);
+        return res.status(200).json(blog);
     }
     catch{
         return res.status(404).json({error:"Blog is not Found"});
     }
 });
+
+app.get('/editblogInfo',async (req, res)=> {
+    try{
+        const id = req.query.id;
+        const blog = await Blog.findById(id);
+        return res.status(200).json(blog);
+    } catch{
+        return res.status(404).json({error:"Blog not found"});
+    }
+});
+
+app.put('/blog/edit', async(req, res)=> {
+    try{
+        const {id} = req.query;
+        const updates = req.body;
+        await Blog.findByIdAndUpdate(id, updates);
+        return res.status(200).json({success:"Blog is Updated"});
+    }
+    catch{
+        return res.status(404).json({error:"Blog is not found"});
+    }
+});
+
+app.post('/blog/comment', async(req, res)=>{
+    try{
+        const {id, username, description, date} = req.body;
+        const newComment = {username, description, date};
+        const blog = await Blog.findById(id);
+        if(!blog) return res.json(404).json({error:"Blog is not found"});
+        blog.comments.push(newComment);
+        blog.save();
+        return res.status(200).json(blog);
+    } catch{
+        return res.status(500).json({error:"Adding comment is not successful"});
+    }
+});
+
+app.delete('/blog/delete', async (req, res)=> {
+    try{
+        const {id} = req.query;
+        const reponse = await Blog.findByIdAndDelete(id);
+        if(!reponse) return res.status(404).json({error:"Blog not found"});
+        return res.status(200).json({success:"Blog is successfully deleted"});
+    } catch{
+
+    }
+});
+
 const port = process.env.PORT;
 app.listen(port, () => console.log("Server started"));
