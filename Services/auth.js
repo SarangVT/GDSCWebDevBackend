@@ -32,7 +32,6 @@ const createJWTCookie = async (req, res, next) => {
             sameSite: "None",
             maxAge: 7*24*60*60*1000,
             path:"/",
-            domain: "https://gdscwebdevbackend.onrender.com.onrender.com",
         });
     
         res.json({userName:user.username});
