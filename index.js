@@ -124,6 +124,7 @@ app.put('/blog/edit', async(req, res)=> {
 app.post('/blog/comment', async(req, res)=>{
     try{
         const {id, username, description, date} = req.body;
+        if(!id || !username || !description || !date) return res.status(500).json({error:"Adding comment is not successful"});
         const newComment = {username, description, date};
         const blog = await Blog.findById(id);
         if(!blog) return res.json(404).json({error:"Blog is not found"});
